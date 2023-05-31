@@ -1,4 +1,4 @@
-package com.example.taskmanager;
+package com.example.taskmanager.modules;
 
 import jakarta.persistence.*;
 
@@ -24,6 +24,9 @@ public class Task {
     @Column(nullable = false,length=45)
     private String name;
 
+    @Column(nullable = false,length=100)
+    private String task;
+
     @Column(nullable = true,length=300)
     private String description;
 
@@ -34,7 +37,8 @@ public class Task {
     public Task() {
     }
 
-    public Task(Integer id, String name, String description, LocalDate dueDate) {
+    public Task(Integer id,String task,String name, String description, LocalDate dueDate) {
+        this.task=task;
         this.id = id;
         this.name = name;
         this.description = description;
@@ -49,6 +53,14 @@ public class Task {
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    public String getTask() {
+        return task;
+    }
+
+    public void setTask(String task) {
+        this.task = task;
     }
 
     public String getName() {
@@ -87,13 +99,13 @@ public class Task {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Task task = (Task) o;
-        return Objects.equals(id, task.id) && Objects.equals(name, task.name) && Objects.equals(description, task.description) && Objects.equals(dueDate, task.dueDate) && Objects.equals(timeCreated, task.timeCreated);
+        Task task1 = (Task) o;
+        return Objects.equals(id, task1.id) && Objects.equals(name, task1.name) && Objects.equals(task, task1.task) && Objects.equals(description, task1.description) && Objects.equals(dueDate, task1.dueDate) && Objects.equals(timeCreated, task1.timeCreated);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, description, dueDate, timeCreated);
+        return Objects.hash(id, name, task, description, dueDate, timeCreated);
     }
 
     @Override
@@ -101,8 +113,9 @@ public class Task {
         return "Task{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
+                ", task='" + task + '\'' +
                 ", description='" + description + '\'' +
-                ", duedate=" + dueDate +
+                ", dueDate=" + dueDate +
                 ", timeCreated=" + timeCreated +
                 '}';
     }

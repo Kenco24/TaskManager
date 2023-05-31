@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Task Manager</title>
+</head>
+<body>
+<h1>Task Manager</h1>
+
+
+<form id="addTaskForm">
+    <label for="name">Name:</label>
+    <input type="text" id="name" name="name"><br>
+
+    <label for="description">Description:</label>
+    <textarea id="description" name="description"></textarea><br>
+
+    <label for="dueDate">Due Date:</label>
+    <input type="date" id="dueDate" name="dueDate"><br>
+
+    <button type="submit">Add Task</button>
+</form>
+
+<hr>
+
+
+<h2>Current Tasks</h2>
+<ul id="taskList">
+
+</ul>
+
+<hr>
+
+
+<form id="taskForm">
+    <label for="taskId">Task ID:</label>
+    <input type="number" id="taskId" name="taskId"><br>
+
+    <button type="submit" name="action" value="update">Update Task</button>
+    <button type="submit" name="action" value="delete">Delete Task</button>
+    <button type="submit" name="action" value="view">View Task</button>
+</form>
+
+
+<script>
+    // Submit form data to create a new task
+    document.getElementById("addTaskForm").addEventListener("submit", function(event) {
+        event.preventDefault();
+        var form = event.target;
+        var formData = new FormData(form);
+        fetch("/myAPI", {
+            method: "POST",
+            body: formData
+        }).then(function(response) {
+            if (response.ok) {
+                form.reset();
+                location.reload();
+            } else {
+                alert("Failed to add task");
+            }
+        });
+    });
+
+
+    fetch("/myAPI", {
+        method: "GET"
+    })
+        .then(function(response) {
+            if (response.ok) {
+                response.json().then(function(tasks) {
+                    var taskList = document.getElementById("taskList");
+                    tasks.forEach(function(task) {
+                        var li = document.createElement("li");
+                        li.appendChild(document.createTextNode("ID: " + task.id));
+                        li.appendChild(document.createTextNode(" | Name: " + task.name));
+                        li.appendChild(document.createTextNode(" | Description: " + task.description));
+                        li.appendChild(document.createTextNode(" | Due Date: " + task.dueDate));
+                        taskList.appendChild(li);
+                    });
+                });
+            } else {
+                alert("Failed to retrieve tasks");
+            }
+        });
+
+
+</script>
+
+</body>
+</html>
