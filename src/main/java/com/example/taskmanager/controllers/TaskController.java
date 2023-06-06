@@ -38,7 +38,7 @@ public class TaskController {
             String first20Chars;
             if (str.length()>20) {
                 first20Chars = str.substring(0, 20);
-                t.setDescription(first20Chars + "...    To view description retrieve a certain task by entering ' localhost:8080/myAPI/{id} ' ");
+                t.setDescription(first20Chars + "...    To view description retrieve a certain task by entering ' localhost:8080/myAPI/" +task.getId());
 
             }
             else {
@@ -56,9 +56,14 @@ public class TaskController {
     }
 
     @PostMapping
-    public void addTask(@RequestBody TaskController.NewTaskRequest request)
-    {
+    public void addTask(@RequestBody TaskController.NewTaskRequest request) {
         try {
+
+            if (request.task.length() > 100 || request.name.length() > 45 ||
+                    (request.description != null && request.description.length() > 300) ||
+                    request.dueDate == null) {
+                throw new DataIntegrityViolationException("Invalid task data");
+            }
             Task task = new Task();
             task.setTask(request.task);
             task.setName(request.name);
@@ -66,10 +71,14 @@ public class TaskController {
             task.setDueDate(request.dueDate);
             task.setTimeCreated(LocalDateTime.now());
             taskRepository.save(task);
-        } catch (DataIntegrityViolationException e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid task data: " + e.getMessage(), e);
-        }
 
+        } catch (DataIntegrityViolationException e) {
+            String errorMessage = "Invalid task data: " + e.getMessage();
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, errorMessage, e);
+        } catch (Exception e) {
+            String errorMessage = "An error occurred: " + e.getMessage();
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, errorMessage, e);
+        }
     }
     @DeleteMapping("{taskId}")
     public void deleteTask(@PathVariable("taskId") Integer id){

@@ -2,9 +2,9 @@ server:
   port: 8080
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5332/tasks
-    username: kenco24
-    password: password
+    url: jdbc:postgresql://localhost:5432/tasks
+    username: postgres
+    password: 1234
   jpa:
     hibernate:
       ddl-auto: update
