@@ -15,7 +15,8 @@ import java.util.Optional;
 
 
 @RestController
-@RequestMapping("/myAPI")
+@RequestMapping("/myAPI/tasks")
+@CrossOrigin(origins = "http://localhost:4200", maxAge = 3600)
 public class TaskController {
     private final TaskRepository taskRepository;
 
@@ -35,16 +36,8 @@ public class TaskController {
             t.setDueDate(task.getDueDate());
             t.setTimeCreated(task.getTimeCreated());
             String str=task.getDescription();
-            String first20Chars;
-            if (str.length()>20) {
-                first20Chars = str.substring(0, 20);
-                t.setDescription(first20Chars + "...    To view description retrieve a certain task by entering ' localhost:8080/myAPI/" +task.getId());
+            t.setDescription(str);
 
-            }
-            else {
-                first20Chars = str;
-                t.setDescription(first20Chars);
-            }
 
             result.add(t);
 
